@@ -5,6 +5,8 @@
 var express = require('express');
 var app = express();
 
+const daysArr = ['Sun','Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const monthArr = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 // enable CORS (https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
 // so that your API is remotely testable by FCC 
 var cors = require('cors');
@@ -19,9 +21,27 @@ app.get("/", function (req, res) {
 });
 
 
-// your first API endpoint... 
-app.get("/api/hello", function (req, res) {
-  res.json({greeting: 'hello API'});
+// api/:date endpoint 
+app.get("/api/:date", function (req, res) {
+  console.log(req.params.date.toString())
+  const datedata = new Date(isNaN(req.params.date)?req.params.date:req.params.date*1);
+  if(datedata.getTime()){
+    console.log(datedata);
+    const timeString = `${daysArr[datedata.getDay()]}, ${datedata.getDate()>9?datedata.getDate():`0${datedata.getDate()}`} ${monthArr[datedata.getMonth()]} ${datedata.getFullYear()} ${datedata.getHours()>9?datedata.getHours():`0${datedata.getHours()}`}:${datedata.getMinutes()>9?datedata.getMinutes():`0${datedata.getMinutes()}`}:${datedata.getSeconds()>9?datedata.getSeconds():`0${datedata.getSeconds()}`} GMT`;
+    res.json({"unix":datedata.getTime(), "utc":timeString});
+  }else{
+    res.json({error : "Invalid Date"})
+  }
+  
+});
+
+// api endpoint 
+app.get("/api", function (req, res) {
+    const datedata = new Date();
+    const timeString = `${daysArr[datedata.getDay()]}, ${datedata.getDate()>9?datedata.getDate():`0${datedata.getDate()}`} ${monthArr[datedata.getMonth()]} ${datedata.getFullYear()} ${datedata.getHours()>9?datedata.getHours():`0${datedata.getHours()}`}:${datedata.getMinutes()>9?datedata.getMinutes():`0${datedata.getMinutes()}`}:${datedata.getSeconds()>9?datedata.getSeconds():`0${datedata.getSeconds()}`} GMT`;
+    console.log(datedata);
+    res.json({"unix":datedata.getTime(), "utc": timeString});
+  
 });
 
 
